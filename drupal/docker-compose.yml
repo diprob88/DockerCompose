@@ -1,0 +1,37 @@
+version: "3" 
+# Defines which compose version to use
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    container_name: drupal_db
+    environment:    
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal2023
+      MYSQL_ROOT_PASSWORD: drupal2023
+    volumes:
+      - mariadb_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: drupal_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: drupal
+      PMA_PASSWORD: drupal2023
+    ports:
+      - "8082:80" 
+  drupal:
+    container_name: drupal_container
+    depends_on:
+      - mariadb
+    image: drupal:latest
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./drupal-data:/opt/drupal/web
+      
+volumes:
+  mariadb_data:
